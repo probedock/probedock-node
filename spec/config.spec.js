@@ -62,7 +62,7 @@ describe("config", function() {
   });
 
   function configData() {
-    return _.pick(config, 'publish', 'servers', 'server', 'project', 'workspace', 'payload');
+    return _.pick(config, 'publish', 'servers', 'server', 'project', 'workspace', 'payload', 'testRunUid');
   }
 
   describe("load", function() {
@@ -77,8 +77,9 @@ describe("config", function() {
     });
 
     it("should load custom configuration options", function() {
-      config.load(sampleConfig);
-      expect(configData()).toEqual(sampleConfig);
+      var configWithUid = _.extend(sampleConfig, { testRunUid: 'yooayedee' });
+      config.load(configWithUid);
+      expect(configData()).toEqual(configWithUid);
     });
 
     it("should load the home configuration file", function() {
@@ -100,7 +101,8 @@ describe("config", function() {
         ROX_WORKSPACE: '/tmp',
         ROX_CACHE_PAYLOAD: '1',
         ROX_PRINT_PAYLOAD: '1',
-        ROX_SAVE_PAYLOAD: '1'
+        ROX_SAVE_PAYLOAD: '1',
+        ROX_TEST_RUN_UID: 'yooayedee'
       });
       config.load();
       expect(configData()).toEqual({
@@ -112,7 +114,8 @@ describe("config", function() {
           cache: true,
           print: true,
           save: true
-        }
+        },
+        testRunUid: 'yooayedee'
       });
     });
 
@@ -174,7 +177,8 @@ describe("config", function() {
         workspace: '/home/tmp',
         payload: {
           cache: false
-        }
+        },
+        testRunUid: 'yooayedee'
       };
 
       files['/home/.rox/config.yml'] = yaml.safeDump(sampleConfig);
@@ -191,9 +195,10 @@ describe("config", function() {
         ROX_WORKSPACE: '/home/tmp',
         ROX_CACHE_PAYLOAD: '0',
         ROX_PRINT_PAYLOAD: '0',
-        ROX_SAVE_PAYLOAD: '0'
+        ROX_SAVE_PAYLOAD: '0',
+        ROX_TEST_RUN_UID: 'yooeyedee'
       });
-      config.load(sampleConfig);
+      config.load(_.extend(sampleConfig, { testRunUid: 'yooayedee' }));
 
       expect(configData()).toEqual(merge(sampleConfig, {
         publish: false,
@@ -203,7 +208,8 @@ describe("config", function() {
           cache: false,
           print: false,
           save: false
-        }
+        },
+        testRunUid: 'yooeyedee'
       }));
     });
 
@@ -233,11 +239,13 @@ describe("config", function() {
         project: {
           apiId: 'down'
         },
-        workspace: '/home/playground'
+        workspace: '/home/playground',
+        testRunUid: 'yooeyedee'
       };
 
       _.extend(envMock, {
-        ROX_WORKSPACE: '/playground'
+        ROX_WORKSPACE: '/playground',
+        ROX_TEST_RUN_UID: 'yooayedee'
       });
 
       config.load(customConfig);
@@ -251,7 +259,8 @@ describe("config", function() {
         project: {
           apiId: 'down'
         },
-        workspace: '/playground'
+        workspace: '/playground',
+        testRunUid: 'yooayedee'
       }));
     });
 
@@ -346,6 +355,13 @@ describe("config", function() {
         },
         payload: {}
       });
+    });
+
+    it("should not load the test run UID from configuration files", function() {
+      files['/home/.rox/config.yml'] = yaml.safeDump(_.extend({}, sampleConfig, { testRunUid: 'yooayedee' }));
+      files['rox.yml'] = yaml.safeDump({ testRunUid: 'yooeyedee' });
+      config.load();
+      expect(configData()).toEqual(sampleConfig);
     });
   });
 
