@@ -54,9 +54,6 @@ describe("config", function() {
       }
     };
 
-    spyOn(fsMock, 'existsSync').andCallThrough();
-    spyOn(fsMock, 'readFileSync').andCallThrough();
-
     var configClass = factory(envMock, fsMock);
     config = new configClass();
   });
@@ -92,6 +89,25 @@ describe("config", function() {
       files['rox.yml'] = yaml.safeDump(sampleConfig);
       config.load();
       expect(configData()).toEqual(sampleConfig);
+    });
+
+    it("should load the project configuration file from a custom location", function() {
+      files['custom.yml'] = yaml.safeDump(sampleConfig);
+      _.extend(envMock, { ROX_CONFIG: 'custom.yml' });
+      config.load();
+      expect(configData()).toEqual(sampleConfig);
+    });
+
+    it("should not load a project configuration file that doesn't exist", function() {
+      files['/home/.rox/config.yml'] = yaml.safeDump({ workspace: '/tmp' });
+      _.extend(envMock, { ROX_CONFIG: 'foo' });
+      config.load();
+      expect(configData()).toEqual({
+        publish: true,
+        project: {},
+        payload: {},
+        workspace: '/tmp'
+      });
     });
 
     it("should load configuration through environment variables", function() {
@@ -421,6 +437,108 @@ describe("config", function() {
     it("should return no options if the configuration is empty", function() {
       config.load();
       expect(config.getProjectOptions()).toEqual({});
+    });
+  });
+
+  describe("validate", function() {
+
+    var errors;
+    beforeEach(function() {
+      errors = [];
+    });
+
+    function validate(customConfig) {
+      config.load(customConfig || sampleConfig);
+      config.validate(errors);
+    }
+
+    it("should add no errors if the configuration is valid", function() {
+      validate();
+      expect(errors).toEqual([]);
+    });
+
+    it("should add an error if the project configuration file set by the ROX_CONFIG environment variable doesn't exist", function() {
+      _.extend(envMock, { ROX_CONFIG: 'foo' });
+      validate();
+      expect(errors).toEqual([ 'No project configuration file found at foo (set with $ROX_CONFIG environment variable)' ]);
+    });
+
+    it("should add an error if the project API ID is missing", function() {
+      delete sampleConfig.project.apiId;
+      validate();
+      expect(errors).toEqual([ 'Project API ID is not set (set "project.apiId" in configuration file)' ]);
+    });
+
+    it("should add an error if the project version is missing", function() {
+      delete sampleConfig.project.version;
+      validate();
+      expect(errors).toEqual([ 'Project version is not set (set "project.version" in configuration file)' ]);
+    });
+
+    it("should add errors if the project options are missing", function() {
+      delete sampleConfig.project;
+      validate();
+      expect(errors).toEqual([
+        'Project API ID is not set (set "project.apiId" in configuration file)',
+        'Project version is not set (set "project.version" in configuration file)'
+      ]);
+    });
+
+    it("should add errors if the project option is not an object", function() {
+      validate(_.extend(sampleConfig, { project: false }));
+      expect(errors).toEqual([
+        'Project is not configured (set "project.apiId" and "project.version" in configuration file)'
+      ]);
+    });
+
+    it("should add an error if no server is configured", function() {
+      delete sampleConfig.servers;
+      validate();
+      expect(errors).toEqual([ 'No ROX Center server is configured (set "servers" in configuration file)' ]);
+    });
+
+    it("should add an error if the servers option is not an object", function() {
+      validate(_.extend(sampleConfig, { servers: false }));
+      expect(errors).toEqual([ 'No ROX Center server is configured (set "servers" in configuration file)' ]);
+    });
+
+    it("should add an error if a server is missing the API URL", function() {
+      delete sampleConfig.servers.localhost.apiUrl;
+      validate();
+      expect(errors).toEqual([ 'No API URL is set for ROX Center server localhost (set "servers.localhost.apiUrl" in configuration file)' ]);
+    });
+
+    it("should add an error if a server is missing the API key ID", function() {
+      delete sampleConfig.servers['example.com'].apiKeyId;
+      validate();
+      expect(errors).toEqual([ 'No API key ID is set for ROX Center server example.com (set "servers.example.com.apiKeyId" in configuration file)' ]);
+    });
+
+    it("should add an error if a server is missing the API key secret", function() {
+      delete sampleConfig.servers.localhost.apiKeySecret;
+      validate();
+      expect(errors).toEqual([ 'No API key secret is set for ROX Center server localhost (set "servers.localhost.apiKeySecret" in configuration file)' ]);
+    });
+
+    it("should add errors if multiple servers are invalid", function() {
+      delete sampleConfig.servers.localhost.apiUrl;
+      delete sampleConfig.servers.localhost.apiKeyId;
+      delete sampleConfig.servers['example.com'].apiKeySecret;
+      validate();
+      expect(errors).toEqual([
+        'No API URL is set for ROX Center server localhost (set "servers.localhost.apiUrl" in configuration file)',
+        'No API key ID is set for ROX Center server localhost (set "servers.localhost.apiKeyId" in configuration file)',
+        'No API key secret is set for ROX Center server example.com (set "servers.example.com.apiKeySecret" in configuration file)'
+      ]);
+    });
+
+    it("should add errors if the configuration is empty", function() {
+      validate({});
+      expect(errors).toEqual([
+        'Project API ID is not set (set "project.apiId" in configuration file)',
+        'Project version is not set (set "project.version" in configuration file)',
+        'No ROX Center server is configured (set "servers" in configuration file)'
+      ]);
     });
   });
 });
