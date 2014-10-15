@@ -2,6 +2,8 @@
 
 > Utilities for [ROX Center](https://github.com/lotaris/rox-center) clients written with Node.js.
 
+[![NPM version](https://badge.fury.io/js/rox-client-node.svg)](http://badge.fury.io/js/rox-client-node)
+
 
 
 ## Usage
