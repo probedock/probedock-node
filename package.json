@@ -1,7 +1,7 @@
 {
   "name": "rox-client-node",
   "description": "Utilities for ROX Center clients written with Node.js.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "./lib",
   "homepage": "https://github.com/lotaris/rox-client-node",
   "author": {
