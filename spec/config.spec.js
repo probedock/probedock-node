@@ -5,7 +5,7 @@ var _ = require('underscore'),
 
 describe("config", function() {
 
-  var config, envMock, files, fsMock, sampleConfig;
+  var config, configClass, envMock, files, fsMock, sampleConfig;
   beforeEach(function() {
 
     files = {};
@@ -54,13 +54,19 @@ describe("config", function() {
       }
     };
 
-    var configClass = factory(envMock, fsMock);
+    configClass = factory(envMock, fsMock);
     config = new configClass();
   });
 
   function configData() {
-    return _.pick(config, 'publish', 'servers', 'server', 'project', 'workspace', 'payload', 'testRunUid');
+    return _.pick(config, 'payload', 'project', 'publish', 'server', 'servers', 'testRunUid', 'workspace');
   }
+
+  it("should accept options at construction", function() {
+    var configWithUid = _.extend(sampleConfig, { testRunUid: 'yooayedee' });
+    config = new configClass(configWithUid);
+    expect(configData()).toEqual(configWithUid);
+  });
 
   describe("load", function() {
 
