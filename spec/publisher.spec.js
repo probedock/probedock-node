@@ -10,16 +10,13 @@ describe('publisher', function() {
 
     matchers.addMatchers(this);
 
-    apiMock = {
-      request: jasmine.createSpy()
-    };
+    apiMock = jasmine.createSpy();
 
     sampleBody = { foo: 'bar' };
 
     sampleOptions = {
       apiUrl: 'http://example.com/api',
-      apiKeyId: 'foo',
-      apiKeySecret: 'bar'
+      apiToken: 'foo'
     };
 
     publisher = factory(apiMock);
@@ -32,11 +29,11 @@ describe('publisher', function() {
       var serializedBody = JSON.stringify(body);
 
       return _.extend({}, options || sampleOptions, {
-        apiRel: 'v1:test-payloads',
+        path: '/publish',
         method: 'POST',
         body: serializedBody,
         headers: {
-          'Content-Type': 'application/vnd.lotaris.rox.payload.v1+json',
+          'Content-Type': 'application/vnd.probedock.payload.v1+json',
           'Content-Length': serializedBody.length
         }
       });
@@ -63,26 +60,26 @@ describe('publisher', function() {
     }
 
     it("should upload a payload", function() {
-      apiMock.request.andReturn(q({ statusCode: 202 }));
+      apiMock.andReturn(q({ statusCode: 202 }));
       testUpload(sampleBody, sampleOptions, true, function(res) {
         expect(res).toBe(undefined);
-        expect(apiMock.request).toHaveBeenCalledWith(expectedRequestOptions(sampleBody));
+        expect(apiMock).toHaveBeenCalledWith(expectedRequestOptions(sampleBody));
       });
     });
 
     it("should reject the returned promise if the upload fails", function() {
-      apiMock.request.andReturn(q.reject(new Error('bug')));
+      apiMock.andReturn(q.reject(new Error('bug')));
       testUpload(sampleBody, sampleOptions, false, function(err) {
         expect(err).toBeAnError('bug');
-        expect(apiMock.request).toHaveBeenCalledWith(expectedRequestOptions(sampleBody));
+        expect(apiMock).toHaveBeenCalledWith(expectedRequestOptions(sampleBody));
       });
     });
 
     it("should reject the returned promise if the response has a different status code than 202", function() {
-      apiMock.request.andReturn(q({ statusCode: 201, body: 'yeehaw' }));
+      apiMock.andReturn(q({ statusCode: 201, body: 'yeehaw' }));
       testUpload(sampleBody, sampleOptions, false, function(err) {
         expect(err).toBeAnError('Server responded with unexpected status code 201 (response: yeehaw)');
-        expect(apiMock.request).toHaveBeenCalledWith(expectedRequestOptions(sampleBody));
+        expect(apiMock).toHaveBeenCalledWith(expectedRequestOptions(sampleBody));
       });
     });
   });

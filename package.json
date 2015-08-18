@@ -1,45 +1,40 @@
 {
-  "name": "rox-client-node",
-  "description": "Utilities for ROX Center clients written with Node.js.",
-  "version": "0.1.2",
+  "name": "probedock-node",
+  "description": "Node.js library to develop new probes for Probe Dock.",
+  "version": "0.2.0",
   "main": "./lib",
-  "homepage": "https://github.com/lotaris/rox-client-node",
+  "homepage": "https://github.com/probedock/probedock-node",
   "author": {
-    "name": "Simon Oulevay",
-    "email": "simon.oulevay@lotaris.com"
+    "name": "Simon Oulevay (Alpha Hydrae)",
+    "email": "npm@alphahydrae.com"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/lotaris/rox-client-node.git"
+    "url": "git://github.com/probedock/probedock-node.git"
   },
   "bugs": {
-    "url": "https://github.com/lotaris/rox-client-node/issues"
+    "url": "https://github.com/probedock/probedock-node/issues"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/lotaris/rox-client-node/blob/master/LICENSE.txt"
-    }
-  ],
+  "license": "MIT",
   "engines": {
     "node": ">= 0.10.0"
   },
   "dependencies": {
     "deepmerge": "~0.2.7",
-    "electrolyte": "0.0.5",
-    "fs-extra": "~0.12.0",
-    "js-yaml": "~3.2.2",
+    "electrolyte": "~0.0.6",
+    "fs-extra": "~0.23.1",
+    "js-yaml": "~3.3.1",
     "q": "^1.0.1",
     "request": "^2.45.0",
     "underscore": "^1.4.0"
   },
   "devDependencies": {
     "grunt": "~0.4.5",
-    "grunt-bump": "0.0.16",
+    "grunt-bump": "~0.3.1",
     "grunt-contrib-clean": "^0.6.0",
-    "grunt-contrib-jshint": "~0.10.0",
-    "grunt-docker": "0.0.8",
-    "grunt-gh-pages": "^0.9.1",
-    "grunt-jasmine-node": "^0.2.1"
+    "grunt-contrib-jshint": "~0.11.2",
+    "grunt-docker": "~0.0.10",
+    "grunt-gh-pages": "^0.10.0",
+    "grunt-jasmine-node": "^0.3.1"
   }
 }

@@ -28,13 +28,11 @@ describe("config", function() {
       servers: {
         localhost: {
           apiUrl: 'http://localhost',
-          apiKeyId: 'foo',
-          apiKeySecret: 'bar'
+          apiToken: 'foo'
         },
         'example.com': {
           apiUrl: 'http://example.com',
-          apiKeyId: 'baz',
-          apiKeySecret: 'qux',
+          apiToken: 'baz',
           projectApiId: 'bar'
         }
       },
@@ -86,27 +84,27 @@ describe("config", function() {
     });
 
     it("should load the home configuration file", function() {
-      files['/home/.rox/config.yml'] = yaml.safeDump(sampleConfig);
+      files['/home/.probedock/config.yml'] = yaml.safeDump(sampleConfig);
       config.load();
       expect(configData()).toEqual(sampleConfig);
     });
 
     it("should load the project configuration file", function() {
-      files['rox.yml'] = yaml.safeDump(sampleConfig);
+      files['probedock.yml'] = yaml.safeDump(sampleConfig);
       config.load();
       expect(configData()).toEqual(sampleConfig);
     });
 
     it("should load the project configuration file from a custom location", function() {
       files['custom.yml'] = yaml.safeDump(sampleConfig);
-      _.extend(envMock, { ROX_CONFIG: 'custom.yml' });
+      _.extend(envMock, { PROBEDOCK_CONFIG: 'custom.yml' });
       config.load();
       expect(configData()).toEqual(sampleConfig);
     });
 
     it("should not load a project configuration file that doesn't exist", function() {
-      files['/home/.rox/config.yml'] = yaml.safeDump({ workspace: '/tmp' });
-      _.extend(envMock, { ROX_CONFIG: 'foo' });
+      files['/home/.probedock/config.yml'] = yaml.safeDump({ workspace: '/tmp' });
+      _.extend(envMock, { PROBEDOCK_CONFIG: 'foo' });
       config.load();
       expect(configData()).toEqual({
         publish: true,
@@ -118,13 +116,13 @@ describe("config", function() {
 
     it("should load configuration through environment variables", function() {
       _.extend(envMock, {
-        ROX_PUBLISH: '0',
-        ROX_SERVER: 'example.com',
-        ROX_WORKSPACE: '/tmp',
-        ROX_CACHE_PAYLOAD: '1',
-        ROX_PRINT_PAYLOAD: '1',
-        ROX_SAVE_PAYLOAD: '1',
-        ROX_TEST_RUN_UID: 'yooayedee'
+        PROBEDOCK_PUBLISH: '0',
+        PROBEDOCK_SERVER: 'example.com',
+        PROBEDOCK_WORKSPACE: '/tmp',
+        PROBEDOCK_CACHE_PAYLOAD: '1',
+        PROBEDOCK_PRINT_PAYLOAD: '1',
+        PROBEDOCK_SAVE_PAYLOAD: '1',
+        PROBEDOCK_TEST_REPORT_UID: 'yooayedee'
       });
       config.load();
       expect(configData()).toEqual({
@@ -150,7 +148,7 @@ describe("config", function() {
             projectApiId: 'foo'
           },
           'example.com': {
-            apiUrl: 'http://example.com/rox',
+            apiUrl: 'http://example.com/probedock',
             apiKeySecret: 'quxx'
           }
         },
@@ -168,8 +166,8 @@ describe("config", function() {
         }
       };
 
-      files['/home/.rox/config.yml'] = yaml.safeDump(sampleConfig);
-      files['rox.yml'] = yaml.safeDump(overrides);
+      files['/home/.probedock/config.yml'] = yaml.safeDump(sampleConfig);
+      files['probedock.yml'] = yaml.safeDump(overrides);
 
       config.load();
       expect(configData()).toEqual(merge(sampleConfig, overrides));
@@ -184,7 +182,7 @@ describe("config", function() {
             projectApiId: 'foo'
           },
           'example.com': {
-            apiUrl: 'http://example.com/rox',
+            apiUrl: 'http://example.com/probedock',
             apiKeySecret: 'quxx'
           }
         },
@@ -203,7 +201,7 @@ describe("config", function() {
         testRunUid: 'yooayedee'
       };
 
-      files['/home/.rox/config.yml'] = yaml.safeDump(sampleConfig);
+      files['/home/.probedock/config.yml'] = yaml.safeDump(sampleConfig);
       config.load(overrides);
 
       expect(configData()).toEqual(merge(sampleConfig, overrides));
@@ -212,13 +210,13 @@ describe("config", function() {
     it("should override custom configuration options with environment variable options", function() {
 
       _.extend(envMock, {
-        ROX_PUBLISH: '0',
-        ROX_SERVER: 'example.com',
-        ROX_WORKSPACE: '/home/tmp',
-        ROX_CACHE_PAYLOAD: '0',
-        ROX_PRINT_PAYLOAD: '0',
-        ROX_SAVE_PAYLOAD: '0',
-        ROX_TEST_RUN_UID: 'yooeyedee'
+        PROBEDOCK_PUBLISH: '0',
+        PROBEDOCK_SERVER: 'example.com',
+        PROBEDOCK_WORKSPACE: '/home/tmp',
+        PROBEDOCK_CACHE_PAYLOAD: '0',
+        PROBEDOCK_PRINT_PAYLOAD: '0',
+        PROBEDOCK_SAVE_PAYLOAD: '0',
+        PROBEDOCK_TEST_REPORT_UID: 'yooeyedee'
       });
       config.load(_.extend(sampleConfig, { testRunUid: 'yooayedee' }));
 
@@ -237,9 +235,9 @@ describe("config", function() {
 
     it("should apply all overrides", function() {
 
-      files['/home/.rox/config.yml'] = yaml.safeDump(sampleConfig);
+      files['/home/.probedock/config.yml'] = yaml.safeDump(sampleConfig);
 
-      files['rox.yml'] = yaml.safeDump({
+      files['probedock.yml'] = yaml.safeDump({
         publish: false,
         servers: {
           localhost: {
@@ -266,8 +264,8 @@ describe("config", function() {
       };
 
       _.extend(envMock, {
-        ROX_WORKSPACE: '/playground',
-        ROX_TEST_RUN_UID: 'yooayedee'
+        PROBEDOCK_WORKSPACE: '/playground',
+        PROBEDOCK_TEST_REPORT_UID: 'yooayedee'
       });
 
       config.load(customConfig);
@@ -288,7 +286,7 @@ describe("config", function() {
 
     it("should parse boolean environment variables", function() {
 
-      var vars = [ 'ROX_PUBLISH', 'ROX_CACHE_PAYLOAD', 'ROX_PRINT_PAYLOAD', 'ROX_SAVE_PAYLOAD' ],
+      var vars = [ 'PROBEDOCK_PUBLISH', 'PROBEDOCK_CACHE_PAYLOAD', 'PROBEDOCK_PRINT_PAYLOAD', 'PROBEDOCK_SAVE_PAYLOAD' ],
           booleanValues = [
             {
               expectedValue: true,
@@ -324,11 +322,11 @@ describe("config", function() {
 
     it("should clear the configuration if reloaded", function() {
 
-      files['/home/.rox/config.yml'] = yaml.safeDump(sampleConfig);
+      files['/home/.probedock/config.yml'] = yaml.safeDump(sampleConfig);
       config.load();
       expect(configData()).toEqual(sampleConfig);
 
-      files = { 'rox.yml': yaml.safeDump({ publish: false }) };
+      files = { 'probedock.yml': yaml.safeDump({ publish: false }) };
       config.load();
       expect(configData()).toEqual({
         publish: false,
@@ -350,7 +348,7 @@ describe("config", function() {
         payload: {}
       });
 
-      _.extend(envMock, { ROX_WORKSPACE: '/tmp' });
+      _.extend(envMock, { PROBEDOCK_WORKSPACE: '/tmp' });
       config.load();
       expect(configData()).toEqual({
         publish: true,
@@ -362,9 +360,9 @@ describe("config", function() {
 
     it("should override the category but merge tags and tickets", function() {
 
-      files['/home/.rox/config.yml'] = yaml.safeDump({ project: { category: 'cat', tags: [ 'yee', 'haw' ], tickets: [ '100' ] } });
+      files['/home/.probedock/config.yml'] = yaml.safeDump({ project: { category: 'cat', tags: [ 'yee', 'haw' ], tickets: [ '100' ] } });
 
-      files['rox.yml'] = yaml.safeDump({ project: { category: 'dog', tags: [ 'yee' ], tickets: [ '200' ] } });
+      files['probedock.yml'] = yaml.safeDump({ project: { category: 'dog', tags: [ 'yee' ], tickets: [ '200' ] } });
 
       config.load({ project: { category: 'camel', tags: [ 'yee', 'haw', 'yay' ], tickets: [ '100', '300' ] } });
 
@@ -380,8 +378,8 @@ describe("config", function() {
     });
 
     it("should not load the test run UID from configuration files", function() {
-      files['/home/.rox/config.yml'] = yaml.safeDump(_.extend({}, sampleConfig, { testRunUid: 'yooayedee' }));
-      files['rox.yml'] = yaml.safeDump({ testRunUid: 'yooeyedee' });
+      files['/home/.probedock/config.yml'] = yaml.safeDump(_.extend({}, sampleConfig, { testRunUid: 'yooayedee' }));
+      files['probedock.yml'] = yaml.safeDump({ testRunUid: 'yooeyedee' });
       config.load();
       expect(configData()).toEqual(sampleConfig);
     });
@@ -393,8 +391,7 @@ describe("config", function() {
 
       var serverOptions = {
         apiUrl: 'http://example.com',
-        apiKeyId: 'foo',
-        apiKeySecret: 'bar'
+        apiToken: 'foo'
       };
 
       config.load({ servers: { 'example.com': serverOptions }, server: 'example.com' });
@@ -463,10 +460,10 @@ describe("config", function() {
       expect(errors).toEqual([]);
     });
 
-    it("should add an error if the project configuration file set by the ROX_CONFIG environment variable doesn't exist", function() {
-      _.extend(envMock, { ROX_CONFIG: 'foo' });
+    it("should add an error if the project configuration file set by the PROBEDOCK_CONFIG environment variable doesn't exist", function() {
+      _.extend(envMock, { PROBEDOCK_CONFIG: 'foo' });
       validate();
-      expect(errors).toEqual([ 'No project configuration file found at foo (set with $ROX_CONFIG environment variable)' ]);
+      expect(errors).toEqual([ 'No project configuration file found at foo (set with $PROBEDOCK_CONFIG environment variable)' ]);
     });
 
     it("should add an error if the project API ID is missing", function() {
@@ -500,41 +497,35 @@ describe("config", function() {
     it("should add an error if no server is configured", function() {
       delete sampleConfig.servers;
       validate();
-      expect(errors).toEqual([ 'No ROX Center server is configured (set "servers" in configuration file)' ]);
+      expect(errors).toEqual([ 'No Probe Dock Center server is configured (set "servers" in configuration file)' ]);
     });
 
     it("should add an error if the servers option is not an object", function() {
       validate(_.extend(sampleConfig, { servers: false }));
-      expect(errors).toEqual([ 'No ROX Center server is configured (set "servers" in configuration file)' ]);
+      expect(errors).toEqual([ 'No Probe Dock Center server is configured (set "servers" in configuration file)' ]);
     });
 
     it("should add an error if a server is missing the API URL", function() {
       delete sampleConfig.servers.localhost.apiUrl;
       validate();
-      expect(errors).toEqual([ 'No API URL is set for ROX Center server localhost (set "servers.localhost.apiUrl" in configuration file)' ]);
+      expect(errors).toEqual([ 'No API URL is set for Probe Dock Center server localhost (set "servers.localhost.apiUrl" in configuration file)' ]);
     });
 
     it("should add an error if a server is missing the API key ID", function() {
-      delete sampleConfig.servers['example.com'].apiKeyId;
+      delete sampleConfig.servers['example.com'].apiToken;
       validate();
-      expect(errors).toEqual([ 'No API key ID is set for ROX Center server example.com (set "servers.example.com.apiKeyId" in configuration file)' ]);
-    });
-
-    it("should add an error if a server is missing the API key secret", function() {
-      delete sampleConfig.servers.localhost.apiKeySecret;
-      validate();
-      expect(errors).toEqual([ 'No API key secret is set for ROX Center server localhost (set "servers.localhost.apiKeySecret" in configuration file)' ]);
+      expect(errors).toEqual([ 'No API authentication token is set for Probe Dock Center server example.com (set "servers.example.com.apiToken" in configuration file)' ]);
     });
 
     it("should add errors if multiple servers are invalid", function() {
       delete sampleConfig.servers.localhost.apiUrl;
-      delete sampleConfig.servers.localhost.apiKeyId;
-      delete sampleConfig.servers['example.com'].apiKeySecret;
+      delete sampleConfig.servers.localhost.apiToken;
+      delete sampleConfig.servers['example.com'].apiToken;
       validate();
       expect(errors).toEqual([
-        'No API URL is set for ROX Center server localhost (set "servers.localhost.apiUrl" in configuration file)',
-        'No API key ID is set for ROX Center server localhost (set "servers.localhost.apiKeyId" in configuration file)',
-        'No API key secret is set for ROX Center server example.com (set "servers.example.com.apiKeySecret" in configuration file)'
+        'No API URL is set for Probe Dock Center server localhost (set "servers.localhost.apiUrl" in configuration file)',
+        'No API authentication token is set for Probe Dock Center server localhost (set "servers.localhost.apiToken" in configuration file)',
+        'No API authentication token is set for Probe Dock Center server example.com (set "servers.example.com.apiToken" in configuration file)'
       ]);
     });
 
@@ -543,7 +534,7 @@ describe("config", function() {
       expect(errors).toEqual([
         'Project API ID is not set (set "project.apiId" in configuration file)',
         'Project version is not set (set "project.version" in configuration file)',
-        'No ROX Center server is configured (set "servers" in configuration file)'
+        'No Probe Dock Center server is configured (set "servers" in configuration file)'
       ]);
     });
   });

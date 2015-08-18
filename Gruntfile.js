@@ -3,6 +3,14 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
 
+    bump: {
+      options: {
+        commit: false,
+        createTag: false,
+        push: false
+      }
+    },
+
     clean: {
       doc: [ 'doc' ],
       ghp: [ 'tmp/gh-pages' ]
