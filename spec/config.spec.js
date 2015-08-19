@@ -46,7 +46,6 @@ describe("config", function() {
       },
       workspace: '/tmp',
       payload: {
-        cache: true,
         print: true,
         save: true
       }
@@ -119,7 +118,6 @@ describe("config", function() {
         PROBEDOCK_PUBLISH: '0',
         PROBEDOCK_SERVER: 'example.com',
         PROBEDOCK_WORKSPACE: '/tmp',
-        PROBEDOCK_CACHE_PAYLOAD: '1',
         PROBEDOCK_PRINT_PAYLOAD: '1',
         PROBEDOCK_SAVE_PAYLOAD: '1',
         PROBEDOCK_TEST_REPORT_UID: 'yooayedee'
@@ -131,7 +129,6 @@ describe("config", function() {
         server: 'example.com',
         workspace: '/tmp',
         payload: {
-          cache: true,
           print: true,
           save: true
         },
@@ -162,7 +159,7 @@ describe("config", function() {
         },
         workspace: '/home/tmp',
         payload: {
-          cache: false
+          save: false
         }
       };
 
@@ -196,7 +193,7 @@ describe("config", function() {
         },
         workspace: '/home/tmp',
         payload: {
-          cache: false
+          save: false
         },
         testRunUid: 'yooayedee'
       };
@@ -213,7 +210,6 @@ describe("config", function() {
         PROBEDOCK_PUBLISH: '0',
         PROBEDOCK_SERVER: 'example.com',
         PROBEDOCK_WORKSPACE: '/home/tmp',
-        PROBEDOCK_CACHE_PAYLOAD: '0',
         PROBEDOCK_PRINT_PAYLOAD: '0',
         PROBEDOCK_SAVE_PAYLOAD: '0',
         PROBEDOCK_TEST_REPORT_UID: 'yooeyedee'
@@ -225,7 +221,7 @@ describe("config", function() {
         server: 'example.com',
         workspace: '/home/tmp',
         payload: {
-          cache: false,
+          save: false,
           print: false,
           save: false
         },
@@ -286,7 +282,7 @@ describe("config", function() {
 
     it("should parse boolean environment variables", function() {
 
-      var vars = [ 'PROBEDOCK_PUBLISH', 'PROBEDOCK_CACHE_PAYLOAD', 'PROBEDOCK_PRINT_PAYLOAD', 'PROBEDOCK_SAVE_PAYLOAD' ],
+      var vars = [ 'PROBEDOCK_PUBLISH', 'PROBEDOCK_PRINT_PAYLOAD', 'PROBEDOCK_SAVE_PAYLOAD' ],
           booleanValues = [
             {
               expectedValue: true,
@@ -311,7 +307,6 @@ describe("config", function() {
             publish: booleanValue.expectedValue,
             project: {},
             payload: {
-              cache: booleanValue.expectedValue,
               print: booleanValue.expectedValue,
               save: booleanValue.expectedValue
             }
