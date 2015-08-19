@@ -36,5 +36,8 @@
     "grunt-docker": "~0.0.10",
     "grunt-gh-pages": "^0.10.0",
     "grunt-jasmine-node": "^0.3.1"
-  }
+  },
+  "keywords": [
+    "probedock"
+  ]
 }

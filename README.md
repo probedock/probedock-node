@@ -7,20 +7,29 @@
 [![Build Status](https://secure.travis-ci.org/probedock/probedock-node.svg)](http://travis-ci.org/probedock/probedock-node)
 [![License](https://img.shields.io/github/license/probedock/probedock-node.svg)](LICENSE.txt)
 
+* [Requirements](#requirements)
+* [Installation](#installation)
+* [Contributing](#contributing)
 
 
-## Usage
 
-```bash
-npm install --save-dev probedock-node
-```
-
-### Requirements
+<a name="requirements"></a>
+## Requirements
 
 * Node.js 0.10+
 
 
 
+<a name="installation"></a>
+## Installation
+
+```bash
+npm install --save-dev probedock-node
+```
+
+
+
+<a name="contributing"></a>
 ## Contributing
 
 * [Fork](https://help.github.com/articles/fork-a-repo)
