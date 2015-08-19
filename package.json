@@ -1,7 +1,7 @@
 {
   "name": "probedock-node",
   "description": "Node.js library to develop new probes for Probe Dock.",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "main": "./lib",
   "homepage": "https://github.com/probedock/probedock-node",
   "author": {
