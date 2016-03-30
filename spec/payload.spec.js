@@ -18,6 +18,7 @@ describe('payload', function() {
           name: 'it should work',
           fingerprint: '5b956d31518a044cfdc6df2e99f9a2d8bf217a68',
           passed: true,
+          active: false,
           duration: 1240,
           category: 'Karma',
           tags: [ 'yee', 'haw' ]
@@ -26,6 +27,7 @@ describe('payload', function() {
           name: 'it might work',
           fingerprint: 'f9147ee933be7261c8b4344d31aa7ad649d9b602',
           passed: false,
+          active: true,
           message: 'it did not work',
           duration: 756,
           category: 'Jasmine',
@@ -54,6 +56,7 @@ describe('payload', function() {
           n: 'it should work',
           f: '5b956d31518a044cfdc6df2e99f9a2d8bf217a68',
           p: true,
+          v: false,
           d: 1240,
           c: 'Karma',
           g: [ 'yee', 'haw' ],
@@ -63,6 +66,7 @@ describe('payload', function() {
           n: 'it might work',
           f: 'f9147ee933be7261c8b4344d31aa7ad649d9b602',
           p: false,
+          v: true,
           m: 'it did not work',
           d: 756,
           c: 'Jasmine',
@@ -102,12 +106,14 @@ describe('payload', function() {
       _.each(sampleTestRun.results, function(result) {
         delete result.message;
         delete result.category;
+        delete result.active;
         delete result.tags;
         delete result.tickets;
       });
 
       _.each(sampleResult.results, function(result) {
         delete result.m;
+        delete result.v;
         result.c = null;
         result.g = [];
         result.t = [];
